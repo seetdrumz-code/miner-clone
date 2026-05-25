@@ -1,131 +1,91 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
-
-import { getAuth, signOut } from "firebase/auth";
-import app from "../firebase";
 
 export default function Navbar() {
 
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const auth = getAuth(app);
-
-  function handleLogout() {
-
-    signOut(auth);
-
-    alert("Logged out!");
-
-  }
-
   return (
 
-    <nav className="border-b border-gray-800 bg-black/80 backdrop-blur-lg sticky top-0 z-50">
+    <nav className="bg-black border-b border-gray-800 px-6 py-4 sticky top-0 z-50">
 
-      <div className="flex justify-between items-center p-6">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-        <h1 className="text-3xl font-bold text-green-400">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="text-3xl font-bold text-green-400"
+        >
           MinerClone
-        </h1>
+        </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-6 text-gray-300 items-center">
+        {/* Navigation Links */}
+        <div className="flex items-center gap-4 text-white font-medium flex-wrap">
 
-          <Link to="/" className="hover:text-green-400 transition">
+          <Link
+            to="/"
+            className="hover:text-green-400 transition"
+          >
             Home
           </Link>
 
-          <Link to="/about" className="hover:text-green-400 transition">
+          <Link
+            to="/about"
+            className="hover:text-green-400 transition"
+          >
             About
           </Link>
 
-          <Link to="/pricing" className="hover:text-green-400 transition">
+          <Link
+            to="/pricing"
+            className="hover:text-green-400 transition"
+          >
             Pricing
           </Link>
 
-          <Link to="/contact" className="hover:text-green-400 transition">
+          <Link
+            to="/contact"
+            className="hover:text-green-400 transition"
+          >
             Contact
           </Link>
 
-          <Link to="/dashboard" className="hover:text-green-400 transition">
+          <Link
+            to="/dashboard"
+            className="hover:text-green-400 transition"
+          >
             Dashboard
           </Link>
 
-          <Link to="/login" className="hover:text-green-400 transition">
-            Login
-          </Link>
-
-          <Link to="/signup" className="hover:text-green-400 transition">
-            Signup
-          </Link>
-
-          <button
-            onClick={handleLogout}
-            className="hover:text-red-400 transition"
+          <Link
+            to="/admin"
+            className="hover:text-green-400 transition"
           >
-            Logout
-          </button>
+            Admin
+          </Link>
 
         </div>
 
-        {/* Mobile Button */}
-        <button
-          className="md:hidden text-3xl"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </button>
+        {/* Auth Buttons */}
+        <div className="flex items-center gap-4">
+
+          <Link
+            to="/login"
+            className="border border-green-500 text-green-400 hover:bg-green-500 hover:text-black transition px-5 py-2 rounded-2xl font-bold"
+          >
+            Login
+          </Link>
+
+          <Link
+            to="/signup"
+            className="bg-green-500 hover:bg-green-400 text-black transition px-5 py-2 rounded-2xl font-bold"
+          >
+            Sign Up
+          </Link>
+
+        </div>
 
       </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-
-        <div className="md:hidden flex flex-col px-6 pb-6 space-y-4 text-gray-300">
-
-          <Link to="/" onClick={() => setMenuOpen(false)}>
-            Home
-          </Link>
-
-          <Link to="/about" onClick={() => setMenuOpen(false)}>
-            About
-          </Link>
-
-          <Link to="/pricing" onClick={() => setMenuOpen(false)}>
-            Pricing
-          </Link>
-
-          <Link to="/contact" onClick={() => setMenuOpen(false)}>
-            Contact
-          </Link>
-
-          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
-            Dashboard
-          </Link>
-
-          <Link to="/login" onClick={() => setMenuOpen(false)}>
-            Login
-          </Link>
-
-          <Link to="/signup" onClick={() => setMenuOpen(false)}>
-            Signup
-          </Link>
-
-          <button
-            onClick={() => {
-              handleLogout();
-              setMenuOpen(false);
-            }}
-            className="text-left hover:text-red-400 transition"
-          >
-            Logout
-          </button>
-
-        </div>
-
-      )}
 
     </nav>
 
   );
+
 }
