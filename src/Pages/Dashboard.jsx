@@ -139,21 +139,32 @@ export default function Dashboard() {
           user.uid
         );
 
+   try {
+
       await setDoc(
         userRef,
         {
 
-          balance,
-
+         balance,
+         
           mining,
-
+          
           withdrawals
 
         },
-        { merge: true }
-      );
+    { merge: true }
+  );
+
+   console.log("Saved successfully");
+
+    } catch (error) {
+
+     console.log(error);
+
+     alert(error.code);
 
     }
+  }
 
     saveData();
 

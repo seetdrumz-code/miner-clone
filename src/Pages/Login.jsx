@@ -38,7 +38,9 @@ export default function Login() {
 
     } catch (error) {
 
-      alert(error.message);
+     console.log(error);
+
+     alert(error.code);
 
     }
 
@@ -62,7 +64,9 @@ export default function Login() {
 
     } catch (error) {
 
-      alert(error.message);
+     console.log(error);
+
+     alert(error.code);
 
     }
 
