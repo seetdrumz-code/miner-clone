@@ -3,12 +3,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDhKtij3t7RAUJnJtl48GFDw0UY73v5CUA",
-  authDomain: "minerclone.firebaseapp.com",
-  projectId: "minerclone",
-  storageBucket: "minerclone.firebasestorage.app",
-  messagingSenderId: "778073921350",
-  appId: "1:778073921350:web:3e147b89d5a65979dbb747"
+  apiKey: "AIzaSyA31H33yOL83kwQjHJpNYAhSRSCJMMF6wE",
+  authDomain: "minerclone2.firebaseapp.com",
+  projectId: "minerclone2",
+  storageBucket: "minerclone2.firebasestorage.app",
+  messagingSenderId: "131190040348",
+  appId: "1:131190040348:web:3761a076a1d35ea62dbcd9"
 };
 
 const app = initializeApp(firebaseConfig);
