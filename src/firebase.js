@@ -8,7 +8,7 @@ const firebaseConfig = {
   projectId: "minerclone",
   storageBucket: "minerclone.firebasestorage.app",
   messagingSenderId: "778073921350",
-  appId: "1:778073921350:web:379621163241cabcdbb747"
+  appId: "1:778073921350:web:3e147b89d5a65979dbb747"
 };
 
 const app = initializeApp(firebaseConfig);
