@@ -1,14 +1,19 @@
 import { useState } from "react";
 
-import { Link, useNavigate } from "react-router-dom";
-
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithRedirect
+  signInWithPopup
 } from "firebase/auth";
 
 import { auth } from "../firebase";
+
+import { useNavigate, Link } from "react-router-dom";
+
+import {
+  FaGoogle,
+  FaBitcoin
+} from "react-icons/fa";
 
 export default function Login() {
 
@@ -20,13 +25,15 @@ export default function Login() {
 
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e) {
+  // EMAIL LOGIN
+
+  const handleLogin = async (e) => {
 
     e.preventDefault();
 
-    setLoading(true);
-
     try {
+
+      setLoading(true);
 
       await signInWithEmailAndPassword(
         auth,
@@ -34,73 +41,97 @@ export default function Login() {
         password
       );
 
+      alert("Login successful");
+
       navigate("/dashboard");
 
     } catch (error) {
 
-     console.log(error);
+      console.log(error);
 
-     alert(error.code);
+      alert(error.code);
+
+    } finally {
+
+      setLoading(false);
 
     }
 
-    setLoading(false);
+  };
 
-  }
+  // GOOGLE LOGIN
 
-  async function handleGoogleLogin() {
+  const googleLogin = async () => {
 
     try {
 
       const provider =
         new GoogleAuthProvider();
 
-      await signInWithRedirect(
+      await signInWithPopup(
         auth,
         provider
       );
+
+      alert("Google login successful");
 
       navigate("/dashboard");
 
     } catch (error) {
 
-     console.log(error);
+      console.log(error);
 
-     alert(error.code);
+      alert(error.code);
 
     }
 
-  }
+  };
 
   return (
 
-    <div className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-black flex items-center justify-center px-6 py-10">
 
       <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl p-8 shadow-2xl">
 
-        {/* Title */}
+        {/* LOGO */}
 
-        <h1 className="text-4xl font-bold text-green-400 text-center mb-2">
+        <div className="flex justify-center mb-6">
+
+          <div className="bg-green-500/20 p-5 rounded-full">
+
+            <FaBitcoin className="text-5xl text-yellow-400" />
+
+          </div>
+
+        </div>
+
+        {/* TITLE */}
+
+        <h1 className="text-4xl font-bold text-center text-green-400 mb-2">
+
           Welcome Back
+
         </h1>
 
-        <p className="text-gray-400 text-center mb-8">
-          Login to continue mining crypto
+        <p className="text-center text-gray-400 mb-8">
+
+          Login to continue mining
+
         </p>
 
-        {/* Form */}
+        {/* FORM */}
 
         <form
           onSubmit={handleLogin}
           className="space-y-5"
         >
 
-          {/* Email */}
-
           <div>
 
-            <label className="block text-sm text-gray-400 mb-2">
+            <label className="block text-gray-300 mb-2">
+
               Email
+
             </label>
 
             <input
@@ -110,18 +141,18 @@ export default function Login() {
               onChange={(e) =>
                 setEmail(e.target.value)
               }
+              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-4 text-white outline-none focus:border-green-400"
               required
-              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-4 text-white outline-none focus:border-green-500"
             />
 
           </div>
 
-          {/* Password */}
-
           <div>
 
-            <label className="block text-sm text-gray-400 mb-2">
+            <label className="block text-gray-300 mb-2">
+
               Password
+
             </label>
 
             <input
@@ -131,13 +162,11 @@ export default function Login() {
               onChange={(e) =>
                 setPassword(e.target.value)
               }
+              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-4 text-white outline-none focus:border-green-400"
               required
-              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-4 text-white outline-none focus:border-green-500"
             />
 
           </div>
-
-          {/* Login Button */}
 
           <button
             type="submit"
@@ -153,30 +182,34 @@ export default function Login() {
 
         </form>
 
-        {/* Divider */}
+        {/* DIVIDER */}
 
-        <div className="flex items-center gap-4 my-6">
+        <div className="flex items-center gap-4 my-8">
 
-          <div className="flex-1 h-px bg-gray-700"></div>
+          <div className="flex-1 h-[1px] bg-gray-700"></div>
 
-          <span className="text-gray-500 text-sm">
+          <span className="text-gray-400 text-sm">
             OR
           </span>
 
-          <div className="flex-1 h-px bg-gray-700"></div>
+          <div className="flex-1 h-[1px] bg-gray-700"></div>
 
         </div>
 
-        {/* Google Login */}
+        {/* GOOGLE BUTTON */}
 
         <button
-          onClick={handleGoogleLogin}
-          className="w-full bg-white hover:bg-gray-200 transition text-black font-bold py-4 rounded-2xl"
+          onClick={googleLogin}
+          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-200 transition text-black font-bold py-4 rounded-2xl"
         >
+
+          <FaGoogle />
+
           Continue with Google
+
         </button>
 
-        {/* Signup Link */}
+        {/* SIGNUP LINK */}
 
         <p className="text-center text-gray-400 mt-8">
 
@@ -186,7 +219,9 @@ export default function Login() {
             to="/signup"
             className="text-green-400 hover:underline"
           >
+
             Sign Up
+
           </Link>
 
         </p>
