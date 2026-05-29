@@ -44,7 +44,9 @@ export const getUserData = async (
       userId
     );
 
-    const snapshot = await getDoc(docRef);
+    const snapshot = await getDoc(
+      docRef
+    );
 
     if (snapshot.exists()) {
 
@@ -52,9 +54,13 @@ export const getUserData = async (
 
     }
 
+    return null;
+
   } catch (error) {
 
     console.log(error);
+
+    return null;
 
   }
 
@@ -75,7 +81,10 @@ export const updateUserData = async (
       userId
     );
 
-    await updateDoc(docRef, data);
+    await updateDoc(
+      docRef,
+      data
+    );
 
   } catch (error) {
 
@@ -85,6 +94,37 @@ export const updateUserData = async (
 
 };
 
-// IMPORTANT
+// CREATE WITHDRAWAL
+
+export const createWithdrawal = async (
+  userId,
+  withdrawal
+) => {
+
+  try {
+
+    const userData =
+      await getUserData(userId);
+
+    const withdrawals =
+      userData?.withdrawals || [];
+
+    await updateUserData(
+      userId,
+      {
+        withdrawals: [
+          withdrawal,
+          ...withdrawals,
+        ],
+      }
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
 
 export default db;
