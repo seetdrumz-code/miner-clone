@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithRedirect
+  signInWithPopup
 } from "firebase/auth";
 
 import { auth } from "../firebase";
@@ -68,7 +68,7 @@ export default function Login() {
       const provider =
         new GoogleAuthProvider();
 
-      await signInWithRedirect(
+      await signInWithPopup(
         auth,
         provider
       );
