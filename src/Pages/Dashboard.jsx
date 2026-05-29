@@ -1,91 +1,115 @@
 import { useEffect, useState } from "react";
-
 import { auth } from "../firebase";
-
-import { saveUserData } from "../firestore";
-
 import {
-  FaBitcoin,
-  FaPlay,
-  FaWallet,
-  FaChartLine,
-  FaUserCircle,
-} from "react-icons/fa";
+  getUserData,
+  updateUserData,
+} from "../firestore";
 
-export default function Dashboard() {
+const Dashboard = () => {
 
-  const [balance, setBalance] = useState(100);
+  const user = auth.currentUser;
 
-  const [mining, setMining] = useState(false);
+  const [balance, setBalance] = useState(0);
 
-  const [username, setUsername] = useState("Miner");
+  const [activities, setActivities] = useState([]);
 
-  // SAVE TO FIRESTORE
+  const [loading, setLoading] = useState(true);
+
+  // LOAD USER DATA
 
   useEffect(() => {
 
-    if (auth.currentUser) {
+    const loadData = async () => {
 
-      saveUserData(
-        auth.currentUser.uid,
-        {
+      if (!user) return;
 
-          name:
-            auth.currentUser.displayName ||
-            "User",
+      try {
 
-          email:
-            auth.currentUser.email,
+        const data = await getUserData(user.uid);
 
-          balance,
+        if (data) {
 
-          mining,
+          setBalance(data.balance || 0);
 
-          updatedAt: Date.now(),
+          setActivities(data.activities || []);
 
         }
-      );
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+      setLoading(false);
+
+    };
+
+    loadData();
+
+  }, [user]);
+
+  // MINING FUNCTION
+
+  const handleMine = async () => {
+
+    if (!user) return;
+
+    const minedAmount = 10;
+
+    const newBalance = balance + minedAmount;
+
+    const updatedActivities = [
+
+      `Mined ${minedAmount} coins at ${new Date().toLocaleTimeString()}`,
+
+      ...activities,
+
+    ];
+
+    // UPDATE UI
+
+    setBalance(newBalance);
+
+    setActivities(updatedActivities);
+
+    // SAVE TO FIRESTORE
+
+    try {
+
+      await updateUserData(user.uid, {
+
+        balance: newBalance,
+
+        activities: updatedActivities,
+
+      });
+
+      console.log("Saved successfully");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Failed to save data");
 
     }
 
-  }, [balance, mining]);
+  };
 
-  // LOAD USER INFO
+  if (loading) {
 
-  useEffect(() => {
+    return (
 
-    if (auth.currentUser) {
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
 
-      setUsername(
-        auth.currentUser.displayName ||
-        auth.currentUser.email
-      );
+        Loading Dashboard...
 
-    }
+      </div>
 
-  }, []);
+    );
 
-  // MINING SYSTEM
-
-  useEffect(() => {
-
-    let interval;
-
-    if (mining) {
-
-      interval = setInterval(() => {
-
-        setBalance((prev) =>
-          Number((prev + 0.5).toFixed(2))
-        );
-
-      }, 3000);
-
-    }
-
-    return () => clearInterval(interval);
-
-  }, [mining]);
+  }
 
   return (
 
@@ -93,175 +117,101 @@ export default function Dashboard() {
 
       {/* HEADER */}
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex justify-between items-center mb-8">
 
         <div>
 
-          <h1 className="text-3xl font-bold text-green-400">
+          <h1 className="text-3xl font-bold text-green-500">
 
-            Dashboard
+            Miner Clone
 
           </h1>
 
           <p className="text-gray-400">
 
-            Welcome back
+            Welcome back {user?.email}
 
           </p>
 
         </div>
 
-        <FaUserCircle className="text-5xl text-green-400" />
+        <img
+          src={
+            user?.photoURL ||
+            "https://i.pravatar.cc/100"
+          }
+          alt="profile"
+          className="w-14 h-14 rounded-full border-2 border-green-500"
+        />
 
       </div>
 
       {/* PROFILE CARD */}
 
-      <div className="bg-gradient-to-r from-green-500 to-green-700 rounded-3xl p-6 mb-6 shadow-lg">
+      <div className="bg-zinc-900 rounded-3xl p-6 shadow-lg mb-6 border border-zinc-800">
 
-        <div className="flex items-center justify-between">
+        <h2 className="text-gray-400 mb-2">
 
-          <div>
+          Total Balance
 
-            <p className="text-sm text-white/80">
+        </h2>
 
-              Logged in as
+        <h1 className="text-5xl font-bold text-green-400">
 
-            </p>
+          {balance}
 
-            <h2 className="text-2xl font-bold">
+        </h1>
 
-              {username}
+        <p className="text-gray-500 mt-2">
 
-            </h2>
-
-          </div>
-
-          <FaBitcoin className="text-5xl text-yellow-300" />
-
-        </div>
+          Coins mined successfully
+        </p>
 
       </div>
 
-      {/* BALANCE CARD */}
+      {/* MINE BUTTON */}
 
-      <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+      <button
+        onClick={handleMine}
+        className="w-full bg-green-500 hover:bg-green-600 transition-all duration-300 py-4 rounded-2xl text-xl font-bold shadow-lg mb-8"
+      >
+        ⛏ Mine 10 Coins
+      </button>
 
-        <div className="flex items-center justify-between">
+      {/* ACTIVITIES */}
 
-          <div>
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800">
 
-            <p className="text-gray-400">
+        <h2 className="text-2xl font-bold mb-4">
 
-              Total Balance
+          Recent Activities
+        </h2>
 
-            </p>
+        {activities.length === 0 ? (
 
-            <h1 className="text-4xl font-bold text-green-400 mt-2">
+          <p className="text-gray-500">
 
-              ${balance}
-
-            </h1>
-
-          </div>
-
-          <div className="bg-green-500/20 p-4 rounded-2xl">
-
-            <FaWallet className="text-3xl text-green-400" />
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* MINING CARD */}
-
-      <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-
-        <div className="flex items-center justify-between mb-5">
-
-          <div>
-
-            <h2 className="text-2xl font-bold">
-
-              Mining Status
-
-            </h2>
-
-            <p className="text-gray-400">
-
-              Earn crypto automatically
-
-            </p>
-
-          </div>
-
-          <FaChartLine className="text-4xl text-green-400" />
-
-        </div>
-
-        <button
-          onClick={() =>
-            setMining(!mining)
-          }
-          className={`w-full py-4 rounded-2xl font-bold text-lg transition ${
-            mining
-              ? "bg-red-500 hover:bg-red-400"
-              : "bg-green-500 hover:bg-green-400 text-black"
-          }`}
-        >
-
-          <div className="flex items-center justify-center gap-3">
-
-            <FaPlay />
-
-            {mining
-              ? "Stop Mining"
-              : "Start Mining"}
-
-          </div>
-
-        </button>
-
-      </div>
-
-      {/* STATS */}
-
-      <div className="grid grid-cols-2 gap-4">
-
-        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-
-          <p className="text-gray-400 mb-2">
-
-            Mining Speed
-
+            No mining activities yet.
           </p>
 
-          <h2 className="text-2xl font-bold text-green-400">
+        ) : (
 
-            0.5 BTC
-          </h2>
+          <div className="space-y-3">
 
-        </div>
+            {activities.map((activity, index) => (
 
-        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-5">
+              <div
+                key={index}
+                className="bg-zinc-800 p-4 rounded-xl text-sm"
+              >
+                {activity}
+              </div>
 
-          <p className="text-gray-400 mb-2">
+            ))}
 
-            Status
+          </div>
 
-          </p>
-
-          <h2 className="text-2xl font-bold text-yellow-400">
-
-            {mining
-              ? "Active"
-              : "Offline"}
-
-          </h2>
-
-        </div>
+        )}
 
       </div>
 
@@ -269,4 +219,6 @@ export default function Dashboard() {
 
   );
 
-}
+};
+
+export default Dashboard;
