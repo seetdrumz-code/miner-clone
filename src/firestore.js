@@ -1,27 +1,26 @@
+import { db } from "./firebase";
+
 import {
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
-
-import { db } from "./firebase";
 
 // SAVE USER DATA
 
 export const saveUserData = async (
-  uid,
+  userId,
   data
 ) => {
 
   try {
 
     await setDoc(
-      doc(db, "users", uid),
+      doc(db, "users", userId),
       data,
       { merge: true }
     );
-
-    console.log("Data saved");
 
   } catch (error) {
 
@@ -34,7 +33,7 @@ export const saveUserData = async (
 // GET USER DATA
 
 export const getUserData = async (
-  uid
+  userId
 ) => {
 
   try {
@@ -42,18 +41,14 @@ export const getUserData = async (
     const docRef = doc(
       db,
       "users",
-      uid
+      userId
     );
 
-    const snap = await getDoc(docRef);
+    const snapshot = await getDoc(docRef);
 
-    if (snap.exists()) {
+    if (snapshot.exists()) {
 
-      return snap.data();
-
-    } else {
-
-      return null;
+      return snapshot.data();
 
     }
 
@@ -61,8 +56,35 @@ export const getUserData = async (
 
     console.log(error);
 
-    return null;
+  }
+
+};
+
+// UPDATE USER DATA
+
+export const updateUserData = async (
+  userId,
+  data
+) => {
+
+  try {
+
+    const docRef = doc(
+      db,
+      "users",
+      userId
+    );
+
+    await updateDoc(docRef, data);
+
+  } catch (error) {
+
+    console.log(error);
 
   }
 
 };
+
+// IMPORTANT
+
+export default db;
