@@ -1,9 +1,68 @@
 import {
-  getFirestore
+  doc,
+  setDoc,
+  getDoc
 } from "firebase/firestore";
 
-import app from "./firebase";
+import { db } from "./firebase";
 
-const db = getFirestore(app);
+// SAVE USER DATA
 
-export default db;
+export const saveUserData = async (
+  uid,
+  data
+) => {
+
+  try {
+
+    await setDoc(
+      doc(db, "users", uid),
+      data,
+      { merge: true }
+    );
+
+    console.log("Data saved");
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
+// GET USER DATA
+
+export const getUserData = async (
+  uid
+) => {
+
+  try {
+
+    const docRef = doc(
+      db,
+      "users",
+      uid
+    );
+
+    const snap = await getDoc(docRef);
+
+    if (snap.exists()) {
+
+      return snap.data();
+
+    } else {
+
+      return null;
+
+    }
+
+  } catch (error) {
+
+    console.log(error);
+
+    return null;
+
+  }
+
+};
