@@ -1,109 +1,119 @@
 import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
-import {
-  collection,
-  getDocs,
-  updateDoc,
-  doc
-} from "firebase/firestore";
+const Admin = () => {
 
-import db from "../firestore";
+  const [users, setUsers] = useState([]);
 
-export default function Admin() {
-
-  const [withdrawals, setWithdrawals] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
-    fetchWithdrawals();
+    const fetchUsers = async () => {
+
+      try {
+
+        const snapshot = await getDocs(
+          collection(db, "users")
+        );
+
+        const data = snapshot.docs.map(
+          (doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })
+        );
+
+        setUsers(data);
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+      setLoading(false);
+
+    };
+
+    fetchUsers();
 
   }, []);
 
-  async function fetchWithdrawals() {
+  if (loading) {
 
-    const snapshot = await getDocs(
-      collection(db, "withdrawals")
+    return (
+
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+
+        Loading Admin Panel...
+
+      </div>
+
     );
-
-    const data =
-      snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-
-    setWithdrawals(data.reverse());
-
-  }
-
-  async function updateStatus(id, status) {
-
-    const withdrawalRef =
-      doc(db, "withdrawals", id);
-
-    await updateDoc(withdrawalRef, {
-      status
-    });
-
-    fetchWithdrawals();
 
   }
 
   return (
 
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-black text-white p-5">
 
-      <h1 className="text-4xl font-bold text-green-400 mb-10">
+      <h1 className="text-4xl font-bold text-green-500 mb-6">
+
         Admin Dashboard
+
       </h1>
 
-      <div className="space-y-6">
+      <p className="text-gray-400 mb-8">
 
-        {withdrawals.map((item) => (
+        Total Users: {users.length}
+
+      </p>
+
+      <div className="space-y-4">
+
+        {users.map((user) => (
 
           <div
-            key={item.id}
-            className="bg-gray-900 border border-gray-800 rounded-3xl p-6"
+            key={user.id}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"
           >
 
-            <p className="font-bold break-all">
-              {item.walletAddress}
+            <p>
+
+              <strong>Email:</strong>{" "}
+              {user.email}
+
             </p>
 
-            <p className="text-gray-400 mt-2">
-              Amount: ${item.amount}
+            <p>
+
+              <strong>Balance:</strong>{" "}
+              {user.balance || 0}
+
             </p>
 
-            <p className="text-yellow-400 mt-2 font-bold">
-              {item.status}
+            <p>
+
+              <strong>Role:</strong>{" "}
+              {user.role || "user"}
+
             </p>
 
-            <div className="flex gap-4 mt-6">
+            <p>
 
-              <button
-                onClick={() =>
-                  updateStatus(
-                    item.id,
-                    "Approved"
-                  )
-                }
-                className="bg-green-500 hover:bg-green-400 text-black font-bold px-6 py-3 rounded-2xl"
-              >
-                Approve
-              </button>
+              <strong>Activities:</strong>{" "}
+              {user.activities?.length || 0}
 
-              <button
-                onClick={() =>
-                  updateStatus(
-                    item.id,
-                    "Rejected"
-                  )
-                }
-                className="bg-red-500 hover:bg-red-400 text-black font-bold px-6 py-3 rounded-2xl"
-              >
-                Reject
-              </button>
+            </p>
 
-            </div>
+            <p>
+
+              <strong>Withdrawals:</strong>{" "}
+              {user.withdrawals?.length || 0}
+
+            </p>
 
           </div>
 
@@ -115,4 +125,6 @@ export default function Admin() {
 
   );
 
-}
+};
+
+export default Admin;

@@ -26,9 +26,11 @@ export default function App() {
 
         <Navbar />
 
-        <div className="flex-1">
+        <main className="flex-1">
 
           <Routes>
+
+            {/* PUBLIC ROUTES */}
 
             <Route
               path="/"
@@ -60,6 +62,8 @@ export default function App() {
               element={<Signup />}
             />
 
+            {/* USER DASHBOARD */}
+
             <Route
               path="/dashboard"
               element={
@@ -68,6 +72,8 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* ADMIN DASHBOARD */}
 
             <Route
               path="/admin"
@@ -80,7 +86,7 @@ export default function App() {
 
           </Routes>
 
-        </div>
+        </main>
 
         <Footer />
 
