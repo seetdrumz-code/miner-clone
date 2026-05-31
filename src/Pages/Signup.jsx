@@ -43,6 +43,10 @@ export default function Signup() {
           email: email,
           balance: 0,
           miningPower: 0,
+          activities: [],
+          withdrawals: 
+          lastMineTime: 0,
+          role: "user",
           createdAt: new Date()
         }
       );

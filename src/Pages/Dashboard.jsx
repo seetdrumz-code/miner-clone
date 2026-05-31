@@ -21,83 +21,140 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const [cooldown, setCooldown] = useState(0);
+
   // LOAD USER DATA
 
   useEffect(() => {
 
-    const loadData = async () => {
-
-      if (!user) return;
-
-      try {
-
-        const data = await getUserData(user.uid);
-
-        if (data) {
-
-          setBalance(data.balance || 0);
-
-          setActivities(data.activities || []);
-
-          setWithdrawals(data.withdrawals || []);
-
-        }
-
-      } catch (error) {
-
-        console.log(error);
-
-      }
-
-      setLoading(false);
-
-    };
-
-    loadData();
-
-  }, [user]);
-
-  // MINING FUNCTION
-
-  const handleMine = async () => {
+  const loadData = async () => {
 
     if (!user) return;
 
-    const minedAmount = 10;
-
-    const newBalance = balance + minedAmount;
-
-    const updatedActivities = [
-
-      `⛏ Mined ${minedAmount} coins at ${new Date().toLocaleTimeString()}`,
-
-      ...activities,
-
-    ];
-
-    setBalance(newBalance);
-
-    setActivities(updatedActivities);
-
     try {
 
-      await updateUserData(user.uid, {
+      const data = await getUserData(user.uid);
 
-        balance: newBalance,
+      if (data) {
 
-        activities: updatedActivities,
+        setBalance(data.balance || 0);
 
-      });
+        setActivities(data.activities || []);
+
+        setWithdrawals(data.withdrawals || []);
+
+        const lastMine =
+          data.lastMineTime || 0;
+
+        const remaining =
+          30 -
+          Math.floor(
+            (Date.now() - lastMine) / 1000
+          );
+
+        if (remaining > 0) {
+
+          setCooldown(remaining);
+
+        }
+
+      }
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Failed to save mining data");
-
     }
 
+    setLoading(false);
+
   };
+
+  loadData();
+
+}, [user]);
+
+  useEffect(() => {
+
+  if (cooldown <= 0) return;
+
+  const timer = setInterval(() => {
+
+    setCooldown((prev) => {
+
+      if (prev <= 1) {
+
+        clearInterval(timer);
+
+        return 0;
+
+      }
+
+      return prev - 1;
+
+    });
+
+  }, 1000);
+
+  return () => clearInterval(timer);
+
+}, [cooldown]);
+
+  // MINING FUNCTION
+
+  const handleMine = async () => {
+
+  if (!user) return;
+
+  if (cooldown > 0) {
+
+    alert(
+      `Wait ${cooldown} seconds before mining again`
+    );
+
+    return;
+
+  }
+
+  const minedAmount = 10;
+
+  const newBalance = balance + minedAmount;
+
+  const updatedActivities = [
+
+    `⛏ Mined ${minedAmount} coins at ${new Date().toLocaleTimeString()}`,
+
+    ...activities,
+
+  ];
+
+  setBalance(newBalance);
+
+  setActivities(updatedActivities);
+
+  try {
+
+    await updateUserData(user.uid, {
+
+      balance: newBalance,
+
+      activities: updatedActivities,
+
+      lastMineTime: Date.now(),
+
+    });
+
+    setCooldown(30);
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert("Failed to save mining data");
+
+  }
+
+};
 
   // WITHDRAWAL FUNCTION
 
@@ -259,13 +316,18 @@ const Dashboard = () => {
       {/* MINE BUTTON */}
 
       <button
-        onClick={handleMine}
-        className="w-full bg-green-500 hover:bg-green-600 transition-all duration-300 py-4 rounded-2xl text-xl font-bold shadow-lg mb-8"
-      >
-
-        ⛏ Mine 10 Coins
-
-      </button>
+  onClick={handleMine}
+  disabled={cooldown > 0}
+  className={`w-full py-4 rounded-2xl text-xl font-bold shadow-lg mb-8 transition-all duration-300 ${
+    cooldown > 0
+      ? "bg-gray-600 cursor-not-allowed"
+      : "bg-green-500 hover:bg-green-600"
+  }`}
+>
+  {cooldown > 0
+    ? `⏳ Wait ${cooldown}s`
+    : "⛏ Mine 10 Coins"}
+</button>
 
       {/* WITHDRAWAL */}
 
