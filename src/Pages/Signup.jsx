@@ -44,7 +44,7 @@ export default function Signup() {
           balance: 0,
           miningPower: 0,
           activities: [],
-          withdrawals: 
+          withdrawals: [],
           lastMineTime: 0,
           role: "user",
           createdAt: new Date()
