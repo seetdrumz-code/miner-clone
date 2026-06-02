@@ -22,6 +22,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const [cooldown, setCooldown] = useState(0);
+  
+  const [dailyCooldown, setDailyCooldown] =
+  useState(false);
 
   // LOAD USER DATA
 
@@ -55,6 +58,23 @@ const Dashboard = () => {
         if (remaining > 0) {
 
           setCooldown(remaining);
+
+        }
+
+  // DAILY REWARD CHECK
+
+        const lastClaim =
+          data.lastDailyClaim || 0;
+
+        const oneDay =
+          24 * 60 * 60 * 1000;
+
+        if (
+          Date.now() - lastClaim <
+          oneDay
+        ) {
+
+          setDailyCooldown(true);
 
         }
 
@@ -151,6 +171,61 @@ const Dashboard = () => {
     console.log(error);
 
     alert("Failed to save mining data");
+
+  }
+
+};
+
+  // DAILY REWARD FUNCTION
+
+  const handleDailyReward = async () => {
+
+  if (!user) return;
+
+  if (dailyCooldown) {
+
+    alert(
+      "Daily reward already claimed."
+    );
+
+    return;
+
+  }
+
+  const reward = 50;
+
+  const newBalance =
+    balance + reward;
+
+  const updatedActivities = [
+
+    `🎁 Daily Reward: +${reward} coins`,
+
+    ...activities,
+
+  ];
+
+  setBalance(newBalance);
+
+  setActivities(updatedActivities);
+
+  setDailyCooldown(true);
+
+  try {
+
+    await updateUserData(user.uid, {
+
+      balance: newBalance,
+
+      activities: updatedActivities,
+
+      lastDailyClaim: Date.now(),
+
+    });
+
+  } catch (error) {
+
+    console.log(error);
 
   }
 
@@ -312,6 +387,34 @@ const Dashboard = () => {
         </p>
 
       </div>
+
+      {/* REWARD CARD */}
+  
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
+
+        <h2 className="text-2xl font-bold mb-3">
+
+          🎁 Daily Reward
+
+        </h2>
+
+      <button
+    onClick={handleDailyReward}
+    disabled={dailyCooldown}
+    className={`w-full py-3 rounded-xl font-bold ${
+      dailyCooldown
+        ? "bg-gray-600"
+        : "bg-yellow-500 text-black"
+    }`}
+  >
+
+    {dailyCooldown
+      ? "Reward Claimed"
+      : "Claim 50 Coins"}
+
+       </button>
+
+     </div>
 
       {/* MINE BUTTON */}
 

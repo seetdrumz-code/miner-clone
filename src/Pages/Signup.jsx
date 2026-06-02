@@ -46,6 +46,7 @@ export default function Signup() {
           activities: [],
           withdrawals: [],
           lastMineTime: 0,
+          lastDailyClaim: 0,
           role: "user",
           createdAt: new Date()
         }
