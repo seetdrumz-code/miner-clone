@@ -8,6 +8,7 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Dashboard from "./Pages/Dashboard";
 import Admin from "./Pages/Admin";
+import Leaderboard from "./Pages/Leaderboard";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -60,6 +61,11 @@ export default function App() {
             <Route
               path="/signup"
               element={<Signup />}
+            />
+
+            <Route
+              path="/leaderboard"
+              element={<Leaderboard />}
             />
 
             {/* USER DASHBOARD */}

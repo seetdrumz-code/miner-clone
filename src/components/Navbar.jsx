@@ -15,7 +15,7 @@ export default function Navbar() {
 
         <Link
           to="/"
-          className="text-3xl font-bold text-green-400"
+          className="text-3xl font8-bold text-green-400"
         >
           MinerClone
         </Link>
@@ -77,6 +77,14 @@ export default function Navbar() {
               className="hover:text-green-400"
             >
               Dashboard
+            </Link>
+
+            <Link
+              to="/leaderboard"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-green-400"
+            >
+              Leaderboard
             </Link>
 
             <Link
