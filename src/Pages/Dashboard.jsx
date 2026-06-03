@@ -91,9 +91,7 @@ const Dashboard = () => {
 
           setDailyCooldown(true);
 
-        }
-
-      }
+    }
 
     } catch (error) {
 
