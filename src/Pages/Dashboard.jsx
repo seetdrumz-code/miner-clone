@@ -26,6 +26,12 @@ const Dashboard = () => {
   const [dailyCooldown, setDailyCooldown] =
   useState(false);
 
+  const [referralCode, setReferralCode] =
+  useState("");
+
+  const [referrals, setReferrals] =
+  useState(0);
+
   // LOAD USER DATA
 
   useEffect(() => {
@@ -45,6 +51,15 @@ const Dashboard = () => {
         setActivities(data.activities || []);
 
         setWithdrawals(data.withdrawals || []);
+
+        setReferralCode(
+          data.referralCode || ""
+        );
+
+        setReferrals(
+          data.referrals || 0
+        );
+      }
 
         const lastMine =
           data.lastMineTime || 0;
@@ -388,7 +403,7 @@ const Dashboard = () => {
 
       </div>
 
-      {/* REWARD CARD */}
+      {/* DAILY REWARD */}
   
       <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
 
@@ -472,6 +487,37 @@ const Dashboard = () => {
         </button>
 
       </div>
+
+      {/* REFERRAL CARD */}
+
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
+
+        <h2 className="text-2xl font-bold mb-3">
+  
+          👥 Referral Program
+
+        </h2>
+
+          <p className="text-gray-400 mb-2">
+
+            Your Referral Code
+
+          </p>
+
+          <div className="bg-zinc-800 p-3 rounded-xl mb-3">
+
+            {referralCode}
+
+          </div>
+
+          <p className="text-green-400">
+
+            Total Referrals: {referrals}
+
+          </p>
+
+      </div>
+
 
       {/* ACTIVITIES */}
 

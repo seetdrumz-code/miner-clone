@@ -45,10 +45,23 @@ export default function Signup() {
           miningPower: 0,
           activities: [],
           withdrawals: [],
-          lastMineTime: 0,
-          lastDailyClaim: 0,
           role: "user",
-          createdAt: new Date()
+
+          referralCode:
+            Math.random()
+              .toString(36)
+              .substring(2, 8)
+              .toUpperCase(),
+
+          referredBy: "",
+
+          referrals: 0,
+
+          createdAt: new Date(),
+
+          lastMineTime: 0,
+
+          dailyRewardClaimed: false
         }
       );
 
