@@ -9,7 +9,13 @@ import {
 
 import {
   doc,
-  setDoc
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  increment
 } from "firebase/firestore";
 
 import app from "../firebase";
@@ -39,6 +45,31 @@ export default function Signup() {
           password
         );
 
+      let referredByUser = null;
+
+      if (referralCode) {
+
+      const q = query(
+        collection(db, "users"),
+        where(
+          "referralCode",
+          "==",
+          referralCode
+        )
+      );
+
+      const snapshot =
+        await getDocs(q);
+
+      if (!snapshot.empty) {
+
+        referredByUser =
+          snapshot.docs[0];
+
+      }
+
+    }
+
       await setDoc(
         doc(db, "users", userCredential.user.uid),
         {
@@ -62,6 +93,42 @@ export default function Signup() {
           referrals: 0
         }
       );
+
+if (referredByUser) {
+
+  const referrerData =
+    referredByUser.data();
+
+  const currentBalance =
+    referrerData.balance || 0;
+
+  const currentReferrals =
+    referrerData.referrals || 0;
+
+  const currentActivities =
+    referrerData.activities || [];
+
+  await updateDoc(
+    referredByUser.ref,
+    {
+      balance:
+        currentBalance + 100,
+
+      referrals:
+        currentReferrals + 1,
+
+      activities: [
+
+        "👥 Referral bonus +100 coins",
+
+        ...currentActivities,
+
+      ],
+
+    }
+  );
+
+}
 
       navigate("/dashboard");
 
