@@ -21,7 +21,9 @@ export default function Signup() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [referralCode, setReferralCode] =
+  useState("");
+  
   const navigate = useNavigate();
 
   async function handleSignup(e) {
@@ -55,7 +57,7 @@ export default function Signup() {
           referralCode:
             userCredential.user.uid.slice(0, 6),
 
-          referredBy: "",
+          referredBy: referralCode || "",
 
           referrals: 0
         }
@@ -97,6 +99,16 @@ export default function Signup() {
           className="w-full bg-black border border-gray-700 rounded-xl p-4 mb-6"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Referral Code (Optional)"
+          className="w-full bg-black border border-gray-700 rounded-xl p-4 mb-6"
+          value={referralCode}
+          onChange={(e) =>
+            setReferralCode(e.target.value)
+          }
         />
 
         <button
