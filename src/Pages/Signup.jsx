@@ -75,7 +75,7 @@ export default function Signup() {
         {
           email: email,
           balance: 0,
-          miningPower: 0,
+          miningPower: 1,
           createdAt: new Date(),
 
           role: "user",

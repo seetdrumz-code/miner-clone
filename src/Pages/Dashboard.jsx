@@ -32,6 +32,9 @@ const Dashboard = () => {
   const [referrals, setReferrals] =
   useState(0);
 
+  const [miningPower, setMiningPower] =
+  useState(1);
+  
   // LOAD USER DATA
 
   useEffect(() => {
@@ -58,6 +61,10 @@ const Dashboard = () => {
 
         setReferrals(
           data.referrals || 0
+        );
+
+        setMiningPower(
+          data.miningPower || 1
         );
       }
 
@@ -149,7 +156,8 @@ const Dashboard = () => {
 
   }
 
-  const minedAmount = 10;
+  const minedAmount =
+  miningPower * 10;
 
   const newBalance = balance + minedAmount;
 
@@ -241,6 +249,74 @@ const Dashboard = () => {
     console.log(error);
 
   }
+
+};
+
+  // UPGRADEPOWER FUNCTION 
+  
+  const handleUpgradePower =
+  async () => {
+
+    if (!user) return;
+
+    const upgradeCost =
+      miningPower * 100;
+
+    if (
+      balance < upgradeCost
+    ) {
+
+      alert(
+        `You need ${upgradeCost} coins`
+      );
+
+      return;
+
+    }
+
+    const newBalance =
+      balance - upgradeCost;
+
+    const newPower =
+      miningPower + 1;
+
+    const updatedActivities = [
+
+      `⚡ Upgraded Mining Power to Level ${newPower}`,
+
+      ...activities,
+
+    ];
+
+    setBalance(newBalance);
+
+    setMiningPower(newPower);
+
+    setActivities(
+      updatedActivities
+    );
+
+    try {
+
+      await updateUserData(
+        user.uid,
+        {
+          balance:
+            newBalance,
+
+          miningPower:
+            newPower,
+
+          activities:
+            updatedActivities,
+        }
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
 
 };
 
@@ -478,6 +554,46 @@ const Dashboard = () => {
        </p>
 
      </div>
+
+      {/* MININGPOWER CARD */}
+
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
+
+        <h2 className="text-2xl font-bold mb-2">
+
+          ⚡ Mining Power
+
+        </h2>
+
+          <p className="text-green-400 mb-2">
+
+            Level {miningPower}
+
+          </p>
+
+        <p className="text-gray-400 mb-4">
+
+          Mine Value:
+          {miningPower * 10}
+          Coins
+
+        </p>
+
+        <button
+          onClick={
+            handleUpgradePower
+          }
+          className="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-xl font-bold"
+      >
+
+          Upgrade Power
+          (
+          {miningPower * 100}
+          Coins)
+
+        </button>
+
+      </div>
 
       {/* MINE BUTTON */}
 
