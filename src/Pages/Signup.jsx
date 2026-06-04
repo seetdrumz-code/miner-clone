@@ -43,25 +43,21 @@ export default function Signup() {
           email: email,
           balance: 0,
           miningPower: 0,
+          createdAt: new Date(),
+
+          role: "user",
           activities: [],
           withdrawals: [],
-          role: "user",
+
+          lastMineTime: 0,
+          lastDailyClaim: 0,
 
           referralCode:
-            Math.random()
-              .toString(36)
-              .substring(2, 8)
-              .toUpperCase(),
+            userCredential.user.uid.slice(0, 6),
 
           referredBy: "",
 
-          referrals: 0,
-
-          createdAt: new Date(),
-
-          lastMineTime: 0,
-
-          dailyRewardClaimed: false
+          referrals: 0
         }
       );
 
