@@ -10,6 +10,14 @@ import { db } from "../firebase";
 const Admin = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalUsers, setTotalUsers] =
+  useState(0);
+  const [totalBalance, setTotalBalance] =
+  useState(0);
+  const [pendingWithdrawals, setPendingWithdrawals] =
+  useState(0);
+  const [approvedWithdrawals, setApprovedWithdrawals] =
+  useState(0);
 
   const fetchUsers = async () => {
     try {
@@ -23,6 +31,51 @@ const Admin = () => {
       }));
 
       setUsers(data);
+      let balanceSum = 0;
+      let pending = 0;
+      let approved = 0;
+
+data.forEach((user) => {
+
+  balanceSum +=
+    user.balance || 0;
+
+  (user.withdrawals || [])
+    .forEach((withdrawal) => {
+
+      if (
+        withdrawal.status ===
+        "pending"
+      ) {
+
+        pending++;
+
+      }
+
+      if (
+        withdrawal.status ===
+        "approved"
+      ) {
+
+        approved++;
+
+      }
+
+    });
+
+});
+
+setTotalUsers(data.length);
+
+setTotalBalance(balanceSum);
+
+setPendingWithdrawals(
+  pending
+);
+
+setApprovedWithdrawals(
+  approved
+);
     } catch (error) {
       console.log(error);
     }
@@ -106,6 +159,58 @@ const Admin = () => {
       <h1 className="text-4xl font-bold text-green-500 mb-3">
         Admin Dashboard
       </h1>
+
+<div className="grid grid-cols-2 gap-4 mb-8">
+
+  <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+
+    <h3 className="text-gray-400">
+      Total Users
+    </h3>
+
+    <p className="text-3xl font-bold text-green-400">
+      {totalUsers}
+    </p>
+
+  </div>
+
+  <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+
+    <h3 className="text-gray-400">
+      Total Coins
+    </h3>
+
+    <p className="text-3xl font-bold text-yellow-400">
+      {totalBalance}
+    </p>
+
+  </div>
+
+  <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+
+    <h3 className="text-gray-400">
+      Pending
+    </h3>
+
+    <p className="text-3xl font-bold text-orange-400">
+      {pendingWithdrawals}
+    </p>
+
+  </div>
+
+  <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+
+    <h3 className="text-gray-400">
+      Approved
+    </h3>
+
+    <p className="text-3xl font-bold text-blue-400">
+      {approvedWithdrawals}
+    </p>
+
+  </div>
+
+</div>
 
       <p className="text-gray-400 mb-8">
         Total Users: {users.length}
