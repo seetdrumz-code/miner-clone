@@ -328,6 +328,19 @@ const Dashboard = () => {
 
   };
 
+  // COPY FUNCTION 
+  
+  const copyReferralCode = () => {
+
+    navigator.clipboard.writeText(
+      referralCode
+    );
+
+    alert("Referral code copied!");
+
+  };
+
+
   if (loading) {
 
     return (
@@ -429,6 +442,43 @@ const Dashboard = () => {
 
      </div>
 
+      {/* REFERRAL CARD */}
+
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
+
+        <h2 className="text-2xl font-bold mb-3">
+
+          👥 Referral Program
+
+        </h2>
+
+          <p className="text-gray-400 mb-2">
+
+            Your Referral Code
+
+          </p>
+
+          <div className="bg-zinc-800 p-3 rounded-xl mb-3 flex justify-between items-center">
+
+        <span>{referralCode}</span>
+
+        <button
+          onClick={copyReferralCode}
+          className="bg-green-500 px-3 py-1 rounded-lg text-black font-bold"
+         >
+           Copy
+         </button>
+
+       </div>
+
+       <p className="text-green-400">
+
+            Total Referrals: {referrals}
+  
+       </p>
+
+     </div>
+
       {/* MINE BUTTON */}
 
       <button
@@ -485,37 +535,6 @@ const Dashboard = () => {
         </button>
 
       </div>
-
-      {/* REFERRAL CARD */}
-
-      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
-
-        <h2 className="text-2xl font-bold mb-3">
-  
-          👥 Referral Program
-
-        </h2>
-
-          <p className="text-gray-400 mb-2">
-
-            Your Referral Code
-
-          </p>
-
-          <div className="bg-zinc-800 p-3 rounded-xl mb-3">
-
-            {referralCode}
-
-          </div>
-
-          <p className="text-green-400">
-
-            Total Referrals: {referrals}
-
-          </p>
-
-      </div>
-
 
       {/* ACTIVITIES */}
 
