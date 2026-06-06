@@ -75,6 +75,7 @@ export default function Signup() {
         {
           email: email,
           balance: 0,
+          achievements: [],
           miningPower: 1,
           createdAt: new Date(),
 

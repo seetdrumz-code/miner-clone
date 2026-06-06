@@ -35,6 +35,9 @@ const Dashboard = () => {
   const [miningPower, setMiningPower] =
   useState(1);
   
+  const [achievements, setAchievements] =
+  useState([]);
+  
   // LOAD USER DATA
 
   useEffect(() => {
@@ -65,6 +68,10 @@ const Dashboard = () => {
 
         setMiningPower(
           data.miningPower || 1
+        );
+
+        setAchievements(
+          data.achievements || []
         );
       }
 
@@ -184,6 +191,14 @@ const Dashboard = () => {
       lastMineTime: Date.now(),
 
     });
+
+    await checkAchievements(
+
+      newBalance,
+
+      miningPower
+
+    );
 
     setCooldown(30);
 
@@ -312,6 +327,14 @@ const Dashboard = () => {
         }
       );
 
+      await checkAchievements(
+
+        newBalance,
+
+        newPower
+
+      );
+
     } catch (error) {
 
       console.log(error);
@@ -416,6 +439,89 @@ const Dashboard = () => {
 
   };
 
+  // ACHIEVEMENTS CHECKER FUNCTION
+
+  const checkAchievements =
+  async (
+    currentBalance,
+    currentPower
+  ) => {
+
+    let newAchievements =
+      [...achievements];
+
+    if (
+      currentBalance >= 100 &&
+      !newAchievements.includes(
+        "💰 100 Coins"
+      )
+    ) {
+
+      newAchievements.push(
+        "💰 100 Coins"
+      );
+
+    }
+
+    if (
+      currentBalance >= 1000 &&
+      !newAchievements.includes(
+        "🏦 1000 Coins"
+      )
+    ) {
+
+      newAchievements.push(
+        "🏦 1000 Coins"
+      );
+
+    }
+
+    if (
+      currentPower >= 5 &&
+      !newAchievements.includes(
+        "⚡ Power Level 5"
+      )
+    ) {
+
+      newAchievements.push(
+        "⚡ Power Level 5"
+      );
+
+    }
+
+    if (
+      referrals >= 1 &&
+      !newAchievements.includes(
+        "👥 First Referral"
+      )
+    ) {
+
+      newAchievements.push(
+        "👥 First Referral"
+      );
+
+    }
+
+    if (
+      newAchievements.length !==
+      achievements.length
+    ) {
+
+      setAchievements(
+        newAchievements
+      );
+
+      await updateUserData(
+        user.uid,
+        {
+          achievements:
+            newAchievements,
+        }
+      );
+
+    }
+
+};
 
   if (loading) {
 
@@ -651,6 +757,48 @@ const Dashboard = () => {
         </button>
 
       </div>
+
+      {/* ACHIEVEMENTS CARD UI */}
+
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-8">
+
+  <h2 className="text-2xl font-bold mb-4">
+
+    🏆 Achievements
+
+  </h2>
+
+  {achievements.length === 0 ? (
+
+    <p className="text-gray-500">
+
+      No achievements yet
+
+    </p>
+
+  ) : (
+
+    achievements.map(
+      (
+        achievement,
+        index
+      ) => (
+
+        <div
+          key={index}
+          className="bg-zinc-800 p-3 rounded-xl mb-2"
+        >
+
+          {achievement}
+
+        </div>
+
+      )
+    )
+
+  )}
+
+</div>
 
       {/* ACTIVITIES */}
 
