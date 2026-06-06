@@ -38,6 +38,9 @@ const Dashboard = () => {
   const [achievements, setAchievements] =
   useState([]);
   
+  const [dailyStreak, setDailyStreak] =
+  useState(1);
+  
   // LOAD USER DATA
 
   useEffect(() => {
@@ -73,6 +76,10 @@ const Dashboard = () => {
         setAchievements(
           data.achievements || []
         );
+
+        setDailyStreak(
+          data.dailyStreak || 1
+        );
       }
 
         const lastMine =
@@ -83,6 +90,17 @@ const Dashboard = () => {
           Math.floor(
             (Date.now() - lastMine) / 1000
           );
+
+        const streakRewards = {
+         1: 50,
+         2: 75,
+         3: 100,
+         4: 150,
+         5: 200,
+         6: 300,
+         7: 500,
+        };
+
 
         if (remaining > 0) {
 
@@ -228,7 +246,15 @@ const Dashboard = () => {
 
   }
 
-  const reward = 50;
+  const reward =
+  streakRewards[dailyStreak] || 50;
+  
+  const nextStreak =
+  dailyStreak >= 7
+    ? 1
+    : dailyStreak + 1;
+
+setDailyStreak(nextStreak);
 
   const newBalance =
     balance + reward;
@@ -249,15 +275,15 @@ const Dashboard = () => {
 
   try {
 
-    await updateUserData(user.uid, {
-
-      balance: newBalance,
-
-      activities: updatedActivities,
-
-      lastDailyClaim: Date.now(),
-
-    });
+    await updateUserData(
+      user.uid,
+      {
+        balance: newBalance,
+        activities: updatedActivities,
+        lastDailyClaim: Date.now(),
+        dailyStreak: nextStreak,
+      }
+    );
 
   } catch (error) {
 
@@ -623,6 +649,32 @@ const Dashboard = () => {
        </button>
 
      </div>
+
+      {/* DAILY STREAK */}
+
+     <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-6">
+
+  <h2 className="text-2xl font-bold mb-2">
+
+    🔥 Daily Streak
+
+  </h2>
+
+  <p className="text-orange-400 text-xl">
+
+    Day {dailyStreak}
+
+  </p>
+
+  <p className="text-gray-400">
+
+    Next Reward:
+    {streakRewards[dailyStreak]}
+    Coins
+
+  </p>
+
+</div>
 
       {/* REFERRAL CARD */}
 
