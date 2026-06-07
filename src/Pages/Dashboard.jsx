@@ -41,6 +41,16 @@ const Dashboard = () => {
   const [dailyStreak, setDailyStreak] =
   useState(1);
   
+  const streakRewards = {
+  1: 50,
+  2: 75,
+  3: 100,
+  4: 150,
+  5: 200,
+  6: 300,
+  7: 500,
+};
+
   // LOAD USER DATA
 
   useEffect(() => {
@@ -51,62 +61,68 @@ const Dashboard = () => {
 
     try {
 
-      const data = await getUserData(user.uid);
 
-      if (data) {
+  const data = await getUserData(user.uid);
 
-        setBalance(data.balance || 0);
+if (data) {
 
-        setActivities(data.activities || []);
+  setBalance(data.balance || 0);
 
-        setWithdrawals(data.withdrawals || []);
+  setActivities(data.activities || []);
 
-        setReferralCode(
-          data.referralCode || ""
-        );
+  setWithdrawals(data.withdrawals || []);
 
-        setReferrals(
-          data.referrals || 0
-        );
+  setReferralCode(
+    data.referralCode || ""
+  );
 
-        setMiningPower(
-          data.miningPower || 1
-        );
+  setReferrals(
+    data.referrals || 0
+  );
 
-        setAchievements(
-          data.achievements || []
-        );
+  setMiningPower(
+    data.miningPower || 1
+  );
 
-        setDailyStreak(
-          data.dailyStreak || 1
-        );
-      }
+  setAchievements(
+    data.achievements || []
+  );
 
-        const lastMine =
-          data.lastMineTime || 0;
+  setDailyStreak(
+    data.dailyStreak || 1
+  );
 
-        const remaining =
-          30 -
-          Math.floor(
-            (Date.now() - lastMine) / 1000
-          );
+  const lastMine =
+    data.lastMineTime || 0;
 
-        const streakRewards = {
-         1: 50,
-         2: 75,
-         3: 100,
-         4: 150,
-         5: 200,
-         6: 300,
-         7: 500,
-        };
+  const remaining =
+    30 -
+    Math.floor(
+      (Date.now() - lastMine) / 1000
+    );
 
+  if (remaining > 0) {
 
-        if (remaining > 0) {
+    setCooldown(remaining);
 
-          setCooldown(remaining);
+  }
 
-        }
+  const lastClaim =
+    data.lastDailyClaim || 0;
+
+  const oneDay =
+    24 * 60 * 60 * 1000;
+
+  if (
+    Date.now() - lastClaim <
+    oneDay
+  ) {
+
+    setDailyCooldown(true);
+
+  }
+
+}
 
   // DAILY REWARD CHECK
 
@@ -254,7 +270,7 @@ const Dashboard = () => {
     ? 1
     : dailyStreak + 1;
 
-setDailyStreak(nextStreak);
+    setDailyStreak(nextStreak);
 
   const newBalance =
     balance + reward;
