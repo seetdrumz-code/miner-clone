@@ -369,6 +369,26 @@ if (
     const newPower =
       miningPower + 1;
 
+    let updatedAchievements =
+  [...achievements];
+
+if (
+  newPower >= 5 &&
+  !updatedAchievements.includes(
+    "Power Miner"
+  )
+) {
+
+  updatedAchievements.push(
+    "Power Miner"
+  );
+
+}
+
+setAchievements(
+  updatedAchievements
+);
+
     const updatedActivities = [
 
       `⚡ Upgraded Mining Power to Level ${newPower}`,
