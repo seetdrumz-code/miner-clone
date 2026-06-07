@@ -310,7 +310,10 @@ if (
 
   } catch (error) {
 
-    console.log(error);
+    console.error(
+      "Mining Error:",
+       error
+    );
 
     alert("Failed to save mining data");
 
