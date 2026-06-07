@@ -201,6 +201,35 @@ if (data) {
   miningPower * 10;
 
   const newBalance = balance + minedAmount;
+  
+  let updatedAchievements =
+  [...achievements];
+
+if (
+  newBalance >= 100 &&
+  !updatedAchievements.includes(
+    "Beginner Miner"
+  )
+) {
+
+  updatedAchievements.push(
+    "Beginner Miner"
+  );
+
+}
+
+if (
+  newBalance >= 1000 &&
+  !updatedAchievements.includes(
+    "Advanced Miner"
+  )
+) {
+
+  updatedAchievements.push(
+    "Advanced Miner"
+  );
+
+}
 
   const updatedActivities = [
 
@@ -216,15 +245,18 @@ if (data) {
 
   try {
 
-    await updateUserData(user.uid, {
-
+    await updateUserData(
+      user.uid,
+      {
       balance: newBalance,
 
-      activities: updatedActivities,
+      activities:  updatedActivities,
+
+      achievements: updatedAchievements,
 
       lastMineTime: Date.now(),
-
-    });
+      }
+    );
 
     await checkAchievements(
 
