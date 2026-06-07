@@ -11,6 +11,8 @@ const Dashboard = () => {
 
   const [balance, setBalance] = useState(0);
 
+  const [notifications, setNotifications] = useState([]);
+
   const [activities, setActivities] = useState([]);
 
   const [withdrawals, setWithdrawals] = useState([]);
@@ -67,6 +69,9 @@ const Dashboard = () => {
 if (data) {
 
   setBalance(data.balance || 0);
+  
+  setNotifications(
+    data.notifications || [] );
 
   setActivities(data.activities || []);
 
@@ -124,7 +129,38 @@ if (data) {
 
 }
 
-  // DAILY REWARD CHECK
+  // NOTIFICATION FUNCTION 
+  
+  const addNotification =
+async (message) => {
+
+  const updatedNotifications = [
+
+    {
+      message,
+      date:
+        new Date().toLocaleString(),
+    },
+
+    ...notifications
+
+  ];
+
+  setNotifications(
+    updatedNotifications
+  );
+
+  await updateUserData(
+    user.uid,
+    {
+      notifications:
+        updatedNotifications,
+    }
+  );
+
+};
+
+  // DAILY REWARD CHECK 
 
         const lastClaim =
           data.lastDailyClaim || 0;
@@ -258,6 +294,10 @@ if (
       }
     );
 
+    await addNotification(
+      `⛏ Mined ${minedAmount} coins`
+    );
+
     await checkAchievements(
 
       newBalance,
@@ -331,6 +371,10 @@ if (
         lastDailyClaim: Date.now(),
         dailyStreak: nextStreak,
       }
+    );
+
+    await addNotification(
+      "🎁 Daily reward claimed"
     );
 
   } catch (error) {
@@ -421,6 +465,10 @@ setAchievements(
         }
       );
 
+      await addNotification(
+        `⚡ Mining Power upgraded to Level ${newPower}`
+      );
+
       await checkAchievements(
 
         newBalance,
@@ -505,6 +553,10 @@ setAchievements(
 
       });
 
+      await addNotification(
+        `💰 Withdrawal request for ${amount} submitted`
+      );
+
       setWalletAddress("");
 
       setWithdrawAmount("");
@@ -536,84 +588,100 @@ setAchievements(
   // ACHIEVEMENTS CHECKER FUNCTION
 
   const checkAchievements =
-  async (
-    currentBalance,
-    currentPower
-  ) => {
+async (
+  currentBalance,
+  currentPower
+) => {
 
-    let newAchievements =
-      [...achievements];
+  let newAchievements =
+    [...achievements];
 
-    if (
-      currentBalance >= 100 &&
-      !newAchievements.includes(
-        "💰 100 Coins"
-      )
-    ) {
+  if (
+    currentBalance >= 100 &&
+    !newAchievements.includes(
+      "💰 100 Coins"
+    )
+  ) {
 
-      newAchievements.push(
-        "💰 100 Coins"
-      );
+    newAchievements.push(
+      "💰 100 Coins"
+    );
 
-    }
+    await addNotification(
+      "🏆 Achievement Unlocked: 100 Coins"
+    );
 
-    if (
-      currentBalance >= 1000 &&
-      !newAchievements.includes(
-        "🏦 1000 Coins"
-      )
-    ) {
+  }
 
-      newAchievements.push(
-        "🏦 1000 Coins"
-      );
+  if (
+    currentBalance >= 1000 &&
+    !newAchievements.includes(
+      "🏦 1000 Coins"
+    )
+  ) {
 
-    }
+    newAchievements.push(
+      "🏦 1000 Coins"
+    );
 
-    if (
-      currentPower >= 5 &&
-      !newAchievements.includes(
-        "⚡ Power Level 5"
-      )
-    ) {
+    await addNotification(
+      "🏆 Achievement Unlocked: 1000 Coins"
+    );
 
-      newAchievements.push(
-        "⚡ Power Level 5"
-      );
+  }
 
-    }
+  if (
+    currentPower >= 5 &&
+    !newAchievements.includes(
+      "⚡ Power Level 5"
+    )
+  ) {
 
-    if (
-      referrals >= 1 &&
-      !newAchievements.includes(
-        "👥 First Referral"
-      )
-    ) {
+    newAchievements.push(
+      "⚡ Power Level 5"
+    );
 
-      newAchievements.push(
-        "👥 First Referral"
-      );
+    await addNotification(
+      "🏆 Achievement Unlocked: Power Level 5"
+    );
 
-    }
+  }
 
-    if (
-      newAchievements.length !==
-      achievements.length
-    ) {
+  if (
+    referrals >= 1 &&
+    !newAchievements.includes(
+      "👥 First Referral"
+    )
+  ) {
 
-      setAchievements(
-        newAchievements
-      );
+    newAchievements.push(
+      "👥 First Referral"
+    );
 
-      await updateUserData(
-        user.uid,
-        {
-          achievements:
-            newAchievements,
-        }
-      );
+    await addNotification(
+      "🏆 Achievement Unlocked: First Referral"
+    );
 
-    }
+  }
+
+  if (
+    newAchievements.length !==
+    achievements.length
+  ) {
+
+    setAchievements(
+      newAchievements
+    );
+
+    await updateUserData(
+      user.uid,
+      {
+        achievements:
+          newAchievements,
+      }
+    );
+
+  }
 
 };
 
@@ -665,6 +733,51 @@ setAchievements(
         />
 
       </div>
+
+      {/* NOTIFICATION CARD */}
+
+      <div className="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 mb-8">
+
+  <h2 className="text-2xl font-bold mb-4">
+
+    🔔 Notifications
+
+  </h2>
+
+  {notifications.length === 0 ? (
+
+    <p className="text-gray-500">
+
+      No notifications
+
+    </p>
+
+  ) : (
+
+    notifications.map(
+      (item, index) => (
+
+        <div
+          key={index}
+          className="bg-zinc-800 p-3 rounded-xl mb-2"
+        >
+
+          <p>{item.message}</p>
+
+          <p className="text-xs text-gray-500">
+
+            {item.date}
+
+          </p>
+
+        </div>
+
+      )
+    )
+
+  )}
+
+</div>
 
       {/* BALANCE CARD */}
 

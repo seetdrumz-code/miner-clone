@@ -75,6 +75,7 @@ export default function Signup() {
         {
           email: email,
           balance: 0,
+          notifications: [],
           achievements: [],
           dailyStreak: 1,
           lastDailyClaim: 0,
