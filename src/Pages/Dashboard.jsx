@@ -599,6 +599,8 @@ async (
   let newAchievements =
     [...achievements];
 
+  let unlockedMessages = [];
+
   if (
     currentBalance >= 100 &&
     !newAchievements.includes(
@@ -610,7 +612,7 @@ async (
       "💰 100 Coins"
     );
 
-    await addNotification(
+    unlockedMessages.push(
       "🏆 Achievement Unlocked: 100 Coins"
     );
 
@@ -627,7 +629,7 @@ async (
       "🏦 1000 Coins"
     );
 
-    await addNotification(
+    unlockedMessages.push(
       "🏆 Achievement Unlocked: 1000 Coins"
     );
 
@@ -644,7 +646,7 @@ async (
       "⚡ Power Level 5"
     );
 
-    await addNotification(
+    unlockedMessages.push(
       "🏆 Achievement Unlocked: Power Level 5"
     );
 
@@ -661,7 +663,7 @@ async (
       "👥 First Referral"
     );
 
-    await addNotification(
+    unlockedMessages.push(
       "🏆 Achievement Unlocked: First Referral"
     );
 
@@ -683,6 +685,16 @@ async (
           newAchievements,
       }
     );
+
+    for (
+      const message of unlockedMessages
+    ) {
+
+      await addNotification(
+        message
+      );
+
+    }
 
   }
 
