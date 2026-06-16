@@ -1147,3 +1147,5 @@ async (
 };
 
 export default Dashboard;
+
+}
