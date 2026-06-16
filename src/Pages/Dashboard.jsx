@@ -310,16 +310,16 @@ if (
 
   } catch (error) {
 
-    console.error(
-      "Mining Error:",
-       error
-    );
+catch (error) {
 
-    alert("Failed to save mining data");
+  console.error(
+    "Mining Error:",
+    error
+  );
 
-  }
+  alert(error.message);
 
-};
+}
 
   // DAILY REWARD FUNCTION
 
