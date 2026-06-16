@@ -310,8 +310,6 @@ if (
 
   } catch (error) {
 
-catch (error) {
-
   console.error(
     "Mining Error:",
     error
